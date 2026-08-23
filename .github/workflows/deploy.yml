@@ -1,0 +1,82 @@
+name: Deploy
+
+# Deploys are driven by tags, not by pushes to main, matching the convention
+# used across the other Novin Cloud repos:
+#   v1.2.3        -> production
+#   v1.2.3-rc.1   -> preview (release candidate)
+#
+# Vercel's own Git integration must be turned OFF for this repo, otherwise
+# every push to main still deploys. See DEPLOYMENT.md.
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+"
+
+# A tag deploy should never race another tag deploy.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ contains(github.ref_name, '-rc.') && 'preview' || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Resolve release channel
+        id: channel
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == *-rc.* ]]; then
+            echo "target=preview" >> "$GITHUB_OUTPUT"
+            echo "prod_flag=" >> "$GITHUB_OUTPUT"
+          else
+            echo "target=production" >> "$GITHUB_OUTPUT"
+            echo "prod_flag=--prod" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel environment
+        run: |
+          vercel pull --yes \
+            --environment=${{ steps.channel.outputs.target }} \
+            --token="${{ secrets.VERCEL_TOKEN }}"
+
+      # Build here rather than on Vercel so a broken build fails the tag
+      # instead of silently shipping.
+      - name: Build
+        run: vercel build ${{ steps.channel.outputs.prod_flag }} --token="${{ secrets.VERCEL_TOKEN }}"
+
+      - name: Deploy
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt ${{ steps.channel.outputs.prod_flag }} \
+            --token="${{ secrets.VERCEL_TOKEN }}")
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "Deployed ${GITHUB_REF_NAME} (${{ steps.channel.outputs.target }}) -> $url"
+
+      # Values go through env, never interpolated straight into the shell.
+      - name: Summary
+        env:
+          CHANNEL: ${{ steps.channel.outputs.target }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          {
+            echo "### Deployed \`${GITHUB_REF_NAME}\`"
+            echo ""
+            echo "- Channel: **${CHANNEL}**"
+            echo "- URL: ${DEPLOY_URL}"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -58,3 +58,72 @@ rules:
 - [ ] جهت صفحه راست‌به‌چپ باشد
 - [ ] دکمه «ویرایش این صفحه» به گیت‌هاب برود
 - [ ] مسیر `/docs/ai/about` مستقیماً (بدون عبور از صفحه اصلی) باز شود
+
+---
+
+# استقرار روی Vercel با تگ
+
+استقرار با *تگ* انجام می‌شود، نه با push به `main` — مطابق قرارداد سایر ریپوهای نوین کلاود:
+
+| تگ | نتیجه |
+|---|---|
+| `v1.2.3` | استقرار روی پروداکشن |
+| `v1.2.3-rc.1` | استقرار پیش‌نمایش (release candidate) |
+| push به `main` | *هیچ استقراری انجام نمی‌شود* |
+
+## چرا این روش؟
+
+Vercel به‌صورت داخلی امکان trigger روی تگ گیت را ندارد و فقط بر اساس برنچ کار می‌کند. بنابراین استقرار خودکار Vercel غیرفعال شده و یک GitHub Action با Vercel CLI این کار را انجام می‌دهد.
+
+مزیت دیگر: build داخل GitHub Actions اجرا می‌شود، پس اگر build خراب باشد تگ fail می‌خورد و نسخه معیوب منتشر نمی‌شود.
+
+## راه‌اندازی اولیه (یک‌بار)
+
+### ۱. غیرفعال کردن استقرار خودکار Vercel
+
+فایل `vercel.json` مقدار `git.deploymentEnabled.main` را روی `false` تنظیم کرده است.
+
+برای اطمینان، در داشبورد Vercel هم بررسی کنید:
+`Project → Settings → Git → Ignored Build Step`
+
+### ۲. تعریف سه Secret در گیت‌هاب
+
+مسیر: `Settings → Secrets and variables → Actions → New repository secret`
+
+| نام | از کجا |
+|---|---|
+| `VERCEL_TOKEN` | vercel.com/account/tokens |
+| `VERCEL_ORG_ID` | فایل `.vercel/project.json` بعد از اجرای `vercel link` |
+| `VERCEL_PROJECT_ID` | همان فایل |
+
+برای گرفتن دو مقدار آخر:
+
+```bash
+npx vercel link
+cat .vercel/project.json
+```
+
+> پوشه `.vercel/` در `.gitignore` قرار دارد و نباید کامیت شود.
+
+## انتشار نسخه جدید
+
+```bash
+# نسخه پیش‌نمایش (تست قبل از انتشار)
+git tag v1.0.0-rc.1
+git push origin v1.0.0-rc.1
+
+# نسخه نهایی روی پروداکشن
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+وضعیت استقرار در تب *Actions* در گیت‌هاب و آدرس نهایی در خلاصه اجرای workflow قابل مشاهده است.
+
+## حذف یک تگ اشتباه
+
+```bash
+git tag -d v1.0.0
+git push origin :refs/tags/v1.0.0
+```
+
+توجه: حذف تگ، استقرار انجام‌شده را برنمی‌گرداند. برای بازگشت، در داشبورد Vercel از قابلیت Rollback استفاده کنید یا تگ اصلاحی جدید بزنید.
