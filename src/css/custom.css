@@ -1,0 +1,54 @@
+/* Vazirmatn — the standard Persian web font.
+   To self-host instead (no external requests), drop the woff2 files into
+   static/fonts/ and swap this import for @font-face rules pointing at
+   /docs/fonts/... */
+@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap");
+
+:root {
+  --ifm-color-primary: #134143;
+  --ifm-color-primary-dark: #103a3c;
+  --ifm-color-primary-darker: #0f3637;
+  --ifm-color-primary-darkest: #0c2c2d;
+  --ifm-color-primary-light: #164a4a;
+  --ifm-color-primary-lighter: #174e4f;
+  --ifm-color-primary-lightest: #1a5859;
+  --ifm-code-font-size: 92%;
+  --ifm-font-family-base: "Vazirmatn", system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-family: "Vazirmatn", system-ui, sans-serif;
+  --ifm-line-height-base: 1.9;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #4db6ab;
+  --ifm-color-primary-dark: #3aa89c;
+  --ifm-color-primary-darker: #349e93;
+  --ifm-color-primary-darkest: #2b8279;
+  --ifm-color-primary-light: #62c1b7;
+  --ifm-color-primary-lighter: #6cc6bd;
+  --ifm-color-primary-lightest: #8bd3cc;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Persian body text reads better with slightly looser spacing. */
+html[dir="rtl"] .markdown p,
+html[dir="rtl"] .markdown li {
+  line-height: 2.05;
+}
+
+/* Code, endpoints and keys stay LTR even inside RTL prose. */
+html[dir="rtl"] code,
+html[dir="rtl"] pre,
+html[dir="rtl"] .prism-code {
+  direction: ltr;
+  text-align: left;
+}
+
+/* Latin digits inside Persian text — model IDs and prices must not be
+   auto-converted, so we never force font-feature digit substitution. */
+html[dir="rtl"] table {
+  direction: rtl;
+}
+html[dir="rtl"] table code {
+  unicode-bidi: embed;
+}
