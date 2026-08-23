@@ -1,8 +1,15 @@
-/* Vazirmatn — the standard Persian web font.
-   To self-host instead (no external requests), drop the woff2 files into
-   static/fonts/ and swap this import for @font-face rules pointing at
-   /docs/fonts/... */
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap");
+/* Vazirmatn, self-hosted via @fontsource.
+ *
+ * Deliberately NOT loaded from Google Fonts: if international connectivity
+ * drops, a CDN font fails to load and the Persian UI falls back to a system
+ * font. These files are bundled into the build and served from our own origin,
+ * so the site renders correctly offline from the outside world.
+ *
+ * Each import carries the arabic + latin subsets with unicode-range set, so
+ * the browser only downloads the subset a page actually needs. */
+@import "@fontsource/vazirmatn/400.css";
+@import "@fontsource/vazirmatn/500.css";
+@import "@fontsource/vazirmatn/700.css";
 
 :root {
   --ifm-color-primary: #134143;
