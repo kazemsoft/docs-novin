@@ -7,11 +7,11 @@ const EDIT_BASE_URL =
   process.env.DOCS_EDIT_BASE_URL ??
   "https://github.com/novincloud/docs-novin/tree/main";
 
-// Production serves the site under console.novin.cloud/docs, so assets are
-// prefixed with /docs/. Standalone hosts (Vercel previews) serve it at the
-// root instead — set DOCS_BASE_URL=/ there, or the root 404s.
-const BASE_URL = process.env.DOCS_BASE_URL ?? "/docs/";
-const SITE_URL = process.env.DOCS_SITE_URL ?? "https://console.novin.cloud";
+// The site is served at the root of its own domain (docs.novin.cloud).
+// Both overridable for a host that mounts the docs under a sub-path instead,
+// e.g. DOCS_BASE_URL=/docs/ — every asset URL is prefixed with this value.
+const BASE_URL = process.env.DOCS_BASE_URL ?? "/";
+const SITE_URL = process.env.DOCS_SITE_URL ?? "https://docs.novin.cloud";
 
 const config: Config = {
   title: "مستندات نوین کلاود",
@@ -42,7 +42,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          // Docs live at the site root — /docs/ai/about, not /docs/docs/ai/about.
+          // Docs are the whole site, so they live at the root: /ai/about.
           routeBasePath: "/",
           editUrl: EDIT_BASE_URL,
           editLocalizedFiles: true,
