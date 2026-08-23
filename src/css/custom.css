@@ -36,12 +36,43 @@ html[dir="rtl"] .markdown li {
   line-height: 2.05;
 }
 
-/* Code, endpoints and keys stay LTR even inside RTL prose. */
-html[dir="rtl"] code,
-html[dir="rtl"] pre,
-html[dir="rtl"] .prism-code {
+/* Code is always LTR, in every locale.
+ *
+ * The Persian build runs this file through rtlcss, which auto-flips ltr->rtl
+ * and left->right — so `direction: ltr` here compiles to `direction: rtl` in
+ * the fa bundle, which is exactly the bug: any line containing Persian gets
+ * bidi-reordered and `client = OpenAI(` renders as `(client = OpenAI`.
+ * The rtl:ignore directives below opt these declarations out of that
+ * flipping. Removing them silently reintroduces the bug.
+ *
+ * Not scoped to [dir="rtl"]: a Persian comment reorders punctuation in the
+ * English locale too. */
+/*rtl:ignore*/
+pre,
+code,
+.prism-code,
+.theme-code-block,
+div[class*="codeBlockContainer"],
+div[class*="codeBlockContent"],
+div[class*="codeBlockTitle"],
+.prism-code .token-line {
+  /*rtl:ignore*/
+  direction: ltr !important;
+  /*rtl:ignore*/
+  text-align: left !important;
+}
+
+/* Keep each Persian comment/string reading RTL *inside itself* without
+   leaking that direction into the surrounding code. */
+.prism-code .token.comment,
+.prism-code .token.string {
+  unicode-bidi: isolate;
+}
+
+/* Inline code inside RTL prose keeps its own LTR run. */
+html[dir="rtl"] :not(pre) > code {
   direction: ltr;
-  text-align: left;
+  unicode-bidi: isolate;
 }
 
 /* Latin digits inside Persian text — model IDs and prices must not be
