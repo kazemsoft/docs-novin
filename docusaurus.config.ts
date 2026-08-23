@@ -16,7 +16,7 @@ const SITE_URL = process.env.DOCS_SITE_URL ?? "https://console.novin.cloud";
 const config: Config = {
   title: "مستندات نوین کلاود",
   tagline: "راهنمای کامل سرویس‌های ابری نوین کلاود",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.svg",
 
   url: SITE_URL,
   baseUrl: BASE_URL,
@@ -66,7 +66,12 @@ const config: Config = {
       title: "مستندات نوین کلاود",
       logo: {
         alt: "نوین کلاود",
-        src: "img/logo.svg",
+        // Same artwork in two inks: dark for the light navbar, white for dark.
+        src: "img/logo.png",
+        srcDark: "img/logo-dark.png",
+        // Source is 1712x416; displayed at that 4.115:1 ratio.
+        width: 148,
+        height: 36,
       },
       items: [
         {
