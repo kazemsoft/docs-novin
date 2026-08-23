@@ -5,19 +5,24 @@ import { themes as prismThemes } from "prism-react-renderer";
 // Public repo that backs "ویرایش این صفحه" → users fork and open a PR.
 const EDIT_BASE_URL =
   process.env.DOCS_EDIT_BASE_URL ??
-  "https://github.com/novincloud/docs/tree/main";
+  "https://github.com/novincloud/docs-novin/tree/main";
+
+// Production serves the site under console.novin.cloud/docs, so assets are
+// prefixed with /docs/. Standalone hosts (Vercel previews) serve it at the
+// root instead — set DOCS_BASE_URL=/ there, or the root 404s.
+const BASE_URL = process.env.DOCS_BASE_URL ?? "/docs/";
+const SITE_URL = process.env.DOCS_SITE_URL ?? "https://console.novin.cloud";
 
 const config: Config = {
   title: "مستندات نوین کلاود",
   tagline: "راهنمای کامل سرویس‌های ابری نوین کلاود",
   favicon: "img/favicon.ico",
 
-  url: "https://console.novin.cloud",
-  // Served under /docs on the console domain, so every asset URL must be prefixed.
-  baseUrl: "/docs/",
+  url: SITE_URL,
+  baseUrl: BASE_URL,
 
   organizationName: "novincloud",
-  projectName: "docs",
+  projectName: "docs-novin",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -80,7 +85,7 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://github.com/novincloud/docs",
+          href: "https://github.com/novincloud/docs-novin",
           label: "گیت‌هاب",
           position: "right",
         },
@@ -101,9 +106,9 @@ const config: Config = {
           items: [
             {
               label: "راهنمای مشارکت",
-              href: "https://github.com/novincloud/docs/blob/main/CONTRIBUTING.md",
+              href: "https://github.com/novincloud/docs-novin/blob/main/CONTRIBUTING.md",
             },
-            { label: "گیت‌هاب", href: "https://github.com/novincloud/docs" },
+            { label: "گیت‌هاب", href: "https://github.com/novincloud/docs-novin" },
           ],
         },
         {

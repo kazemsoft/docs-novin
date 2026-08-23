@@ -45,7 +45,7 @@ description: مستندات رسمی و متن‌باز سرویس‌های اب
 
 هدف این است که با مشارکت جمعی، مستندات دقیق‌تر و به‌روزتری داشته باشیم.
 
-راهنمای کامل: [نحوه مشارکت](https://github.com/novincloud/docs/blob/main/CONTRIBUTING.md)
+راهنمای کامل: [نحوه مشارکت](https://github.com/novincloud/docs-novin/blob/main/CONTRIBUTING.md)
 
 ## کمک بیشتر
 

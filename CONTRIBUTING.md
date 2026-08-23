@@ -20,8 +20,8 @@
 ## راه دوم — اجرای محلی (برای تغییرات بزرگ‌تر)
 
 ```bash
-git clone https://github.com/novincloud/docs.git
-cd docs
+git clone https://github.com/novincloud/docs-novin.git
+cd docs-novin
 npm install
 npm start
 ```
@@ -113,7 +113,7 @@ print("سلام")
 
 ## گزارش مشکل بدون ارسال کد
 
-اگر وقت یا تمایل ارسال Pull Request ندارید، کافی است یک [Issue](https://github.com/novincloud/docs/issues/new) باز کنید و مشکل را توضیح دهید. همین هم کمک بزرگی است.
+اگر وقت یا تمایل ارسال Pull Request ندارید، کافی است یک [Issue](https://github.com/novincloud/docs-novin/issues/new) باز کنید و مشکل را توضیح دهید. همین هم کمک بزرگی است.
 
 ## سوالات مربوط به سرویس
 

@@ -10,7 +10,7 @@
 
 ```bash
 docker build \
-  --build-arg DOCS_EDIT_BASE_URL=https://github.com/novincloud/docs/tree/main \
+  --build-arg DOCS_EDIT_BASE_URL=https://github.com/novincloud/docs-novin/tree/main \
   -t novincloud-docs:<tag> .
 ```
 
