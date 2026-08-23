@@ -10,3 +10,5 @@ yarn-error.log*
 
 # Vercel CLI (contains project/org ids)
 .vercel/
+.vercel
+.env*
