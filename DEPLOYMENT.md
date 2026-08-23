@@ -95,6 +95,12 @@ Vercel به‌صورت داخلی امکان trigger روی تگ گیت را ن�
 | `VERCEL_TOKEN` | vercel.com/account/tokens |
 | `VERCEL_ORG_ID` | فایل `.vercel/project.json` بعد از اجرای `vercel link` |
 | `VERCEL_PROJECT_ID` | همان فایل |
+| `VERCEL_SCOPE` | اسلاگ تیم در Vercel (مثلاً `mohammads-projects-f0ac81fe`) |
+
+> *مهم — نوع توکن:* حتماً از صفحه `vercel.com/account/tokens` توکن بسازید (توکن حساب کاربری).
+> توکن‌های *Project-scoped* که با `vcp_` شروع می‌شوند با Vercel CLI کار *نمی‌کنند*؛
+> این توکن‌ها به endpoint کاربر دسترسی ندارند و CLI با خطای `User not found` متوقف می‌شود.
+> هنگام ساخت توکن، Scope را روی همان تیمی تنظیم کنید که پروژه در آن قرار دارد.
 
 برای گرفتن دو مقدار آخر:
 

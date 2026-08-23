@@ -27,6 +27,9 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # The project lives under a team, so the CLI needs the team slug
+      # explicitly; without it, token/team resolution fails.
+      VERCEL_SCOPE: ${{ secrets.VERCEL_SCOPE }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,6 +56,7 @@ jobs:
         run: |
           vercel pull --yes \
             --environment=${{ steps.channel.outputs.target }} \
+            --scope="$VERCEL_SCOPE" \
             --token="${{ secrets.VERCEL_TOKEN }}"
 
       # Build here rather than on Vercel so a broken build fails the tag
@@ -64,6 +68,7 @@ jobs:
         id: deploy
         run: |
           url=$(vercel deploy --prebuilt ${{ steps.channel.outputs.prod_flag }} \
+            --scope="$VERCEL_SCOPE" \
             --token="${{ secrets.VERCEL_TOKEN }}")
           echo "url=$url" >> "$GITHUB_OUTPUT"
           echo "Deployed ${GITHUB_REF_NAME} (${{ steps.channel.outputs.target }}) -> $url"
