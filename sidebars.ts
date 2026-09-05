@@ -22,6 +22,19 @@ const sidebars: SidebarsConfig = {
         "ai/api-reference",
       ],
     },
+    {
+      type: "category",
+      label: "میرورها و مخزن‌ها",
+      collapsed: false,
+      items: [
+        "mirrors/about",
+        "mirrors/linux",
+        "mirrors/languages",
+        "mirrors/docker",
+        "mirrors/devops",
+        "mirrors/all-repositories",
+      ],
+    },
   ],
 };
 
