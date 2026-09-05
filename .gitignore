@@ -12,3 +12,11 @@ yarn-error.log*
 .vercel/
 .vercel
 .env*
+
+# Stray personal/scratch markdown dropped in the repo root.
+# origin is a PUBLIC repo, so root-level notes are ignored by default and the
+# real docs are re-allowed explicitly. Docs live in docs/, never in the root.
+/*.md
+!/README.md
+!/CONTRIBUTING.md
+!/DEPLOYMENT.md
