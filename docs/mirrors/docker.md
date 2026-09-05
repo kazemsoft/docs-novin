@@ -8,24 +8,26 @@ description: دریافت ایمیج‌های داکر و OCI از رجیستر�
 
 # Docker و رجیستری OCI
 
-:::warning[وضعیت فعلی — نیازمند احراز هویت]
-برخلاف سایر مخزن‌های میرور که عمومی و بدون لاگین کار می‌کنند، رجیستری Docker در حال حاضر
-**بدون احراز هویت پاسخ نمی‌دهد** و درخواست ناشناس با خطای `401 Unauthorized` برمی‌گردد.
+:::tip[بدون نیاز به ثبت‌نام]
+رجیستری داکر عمومی است و `docker pull` بدون لاگین کار می‌کند.
 
-تا زمان نهایی شدن سیاست دسترسی، دستور `docker pull` بدون `docker login` کار نخواهد کرد.
-برای دریافت دسترسی از طریق [کنسول کاربری](https://console.novin.cloud) تیکت ثبت کنید.
+اگر با `curl` مسیر `/v2/` را صدا بزنید پاسخ `401` می‌گیرید؛ این رفتار **طبیعی** است و
+بخشی از فرایند استاندارد توکن داکر است. خود `docker` این مرحله را خودکار انجام می‌دهد
+و توکن ناشناس دریافت می‌کند.
 :::
 
-## ورود به رجیستری
-
-```bash
-docker login mirror.novin.cloud
-```
-
-پس از ورود موفق، ایمیج‌ها را مثل همیشه دریافت کنید:
+## دریافت ایمیج
 
 ```bash
 docker pull mirror.novin.cloud/docker/library/alpine:3.20
+```
+
+نوین کلاود دامنه‌ی اختصاصی `docker.novin.cloud` را هم برای همین کار ارائه می‌دهد
+که نام ایمیج را کوتاه‌تر می‌کند:
+
+```bash
+docker pull docker.novin.cloud/hello-world
+docker pull docker.novin.cloud/bitnami/postgresql
 ```
 
 ## تنظیم به‌عنوان registry mirror
@@ -35,7 +37,7 @@ docker pull mirror.novin.cloud/docker/library/alpine:3.20
 
 ```json
 {
-  "registry-mirrors": ["https://mirror.novin.cloud"]
+  "registry-mirrors": ["https://docker.novin.cloud"]
 }
 ```
 
@@ -51,7 +53,7 @@ sudo systemctl restart docker
 
 ```toml
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-  endpoint = ["https://mirror.novin.cloud"]
+  endpoint = ["https://docker.novin.cloud"]
 ```
 
 ```bash
