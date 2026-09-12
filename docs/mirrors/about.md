@@ -69,6 +69,7 @@ https://mirror.novin.cloud/artifactory/ubuntu/...
 | زبان‌ها و پکیج‌منیجرها (npm، PyPI، Go، Maven و…) | [زبان‌های برنامه‌نویسی](./languages) |
 | Docker و رجیستری OCI | [Docker و OCI](./docker) |
 | Kubernetes، Helm و ابزارهای DevOps | [ابزارهای DevOps](./devops) |
+| راهنمای گام‌به‌گام هر ابزار (npm، bun، pip، Ubuntu، Alpine و…) | [راهنمای هر مخزن](./guides) |
 | فهرست کامل مخزن‌ها | [همه‌ی مخزن‌ها](./all-repositories) |
 
 ## وضعیت سرویس
