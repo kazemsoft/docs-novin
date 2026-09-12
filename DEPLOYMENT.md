@@ -1,60 +1,98 @@
 # استقرار سایت مستندات
 
-سایت به‌صورت استاتیک build می‌شود و روی مسیر `/docs` از دامنه `console.novin.cloud` سرو می‌گردد.
+سایت به‌صورت استاتیک build می‌شود و روی دامنه اختصاصی [docs.novin.cloud](https://docs.novin.cloud) در ریشه (`/`) سرو می‌شود.
 
-## نکته مهم: مسیر `/docs`
+استقرار فعلی روی *Vercel* است و با *تگ نسخه* انجام می‌شود. طبق تسک CONSOLE-168، در آینده به سرور ایران منتقل خواهد شد؛ فایل‌های `Dockerfile` و `nginx.conf` برای همان مرحله آماده نگه داشته شده‌اند.
 
-مقدار `baseUrl` در `docusaurus.config.ts` روی `/docs/` تنظیم شده است. تمام asset‌ها با همین پیشوند تولید می‌شوند، بنابراین سایت **باید** روی همین مسیر سرو شود. تغییر مسیر بدون تغییر `baseUrl` باعث خرابی CSS و JS می‌شود.
+## مسیر سرو شدن (`baseUrl`)
 
-## ساخت ایمیج
+مقدار پیش‌فرض `baseUrl` روی `/` است، چون سایت صاحب ریشه دامنه خودش است.
+
+اگر روزی لازم شد سایت زیر یک زیرمسیر سرو شود (مثلاً `example.com/docs`)، کافی است متغیر محیطی هنگام build تنظیم شود:
 
 ```bash
-docker build \
-  --build-arg DOCS_EDIT_BASE_URL=https://github.com/novincloud/docs/tree/main \
-  -t novincloud-docs:<tag> .
+DOCS_BASE_URL=/docs/ npm run build
 ```
 
-خروجی build داخل ایمیج در مسیر `/usr/share/nginx/html/docs` قرار می‌گیرد.
+تمام asset‌ها با همین پیشوند تولید می‌شوند؛ اگر مسیر سرو شدن با `baseUrl` هم‌خوان نباشد، CSS و JS بارگذاری نمی‌شوند.
 
-## اتصال به `console.novin.cloud/docs`
+| متغیر | پیش‌فرض | کاربرد |
+|---|---|---|
+| `DOCS_BASE_URL` | `/` | مسیر سرو شدن سایت |
+| `DOCS_SITE_URL` | `https://docs.novin.cloud` | دامنه، برای لینک‌های canonical |
+| `DOCS_EDIT_BASE_URL` | ریپو گیت‌هاب | مقصد دکمه «ویرایش این صفحه» |
 
-دامنه `console.novin.cloud` در حال حاضر به کنسول کاربری (Next.js) اشاره می‌کند. برای اضافه شدن مسیر `/docs`، باید در Ingress یک path جداگانه تعریف شود که به سرویس مستندات مسیر بدهد.
+---
 
-نمونه (مسیر `/docs` پیش از مسیر `/` قرار بگیرد تا اولویت داشته باشد):
+# استقرار روی Vercel با تگ
 
-```yaml
-rules:
-  - host: console.novin.cloud
-    http:
-      paths:
-        - path: /docs
-          pathType: Prefix
-          backend:
-            service:
-              name: novincloud-docs
-              port:
-                number: 80
-        - path: /
-          pathType: Prefix
-          backend:
-            service:
-              name: customerconsole
-              port:
-                number: 3000
+استقرار با *تگ* انجام می‌شود، نه با push به `main` — مطابق قرارداد سایر ریپوهای نوین کلاود:
+
+| تگ | نتیجه |
+|---|---|
+| `v1.2.3` | استقرار روی پروداکشن |
+| `v1.2.3-rc.1` | استقرار پیش‌نمایش (release candidate) |
+| push به `main` | *هیچ استقراری انجام نمی‌شود* |
+
+## چرا این روش؟
+
+Vercel به‌صورت داخلی امکان trigger روی تگ گیت را ندارد و فقط بر اساس برنچ کار می‌کند. بنابراین استقرار خودکار Vercel غیرفعال شده و یک GitHub Action با Vercel CLI این کار را انجام می‌دهد.
+
+مزیت دیگر: build داخل GitHub Actions اجرا می‌شود، پس اگر build خراب باشد تگ fail می‌خورد و نسخه معیوب منتشر نمی‌شود.
+
+## راه‌اندازی اولیه (یک‌بار)
+
+### ۱. غیرفعال کردن استقرار خودکار Vercel
+
+فایل `vercel.json` مقدار `git.deploymentEnabled.main` را روی `false` تنظیم کرده است.
+
+برای اطمینان، در داشبورد Vercel هم بررسی کنید:
+`Project → Settings → Git → Ignored Build Step`
+
+### ۲. تعریف سه Secret در گیت‌هاب
+
+مسیر: `Settings → Secrets and variables → Actions → New repository secret`
+
+| نام | از کجا |
+|---|---|
+| `VERCEL_TOKEN` | vercel.com/account/tokens |
+| `VERCEL_ORG_ID` | فایل `.vercel/project.json` بعد از اجرای `vercel link` |
+| `VERCEL_PROJECT_ID` | همان فایل |
+| `VERCEL_SCOPE` | اسلاگ تیم در Vercel (مثلاً `mohammads-projects-f0ac81fe`) |
+
+> *مهم — نوع توکن:* حتماً از صفحه `vercel.com/account/tokens` توکن بسازید (توکن حساب کاربری).
+> توکن‌های *Project-scoped* که با `vcp_` شروع می‌شوند با Vercel CLI کار *نمی‌کنند*؛
+> این توکن‌ها به endpoint کاربر دسترسی ندارند و CLI با خطای `User not found` متوقف می‌شود.
+> هنگام ساخت توکن، Scope را روی همان تیمی تنظیم کنید که پروژه در آن قرار دارد.
+
+برای گرفتن دو مقدار آخر:
+
+```bash
+npx vercel link
+cat .vercel/project.json
 ```
 
-:::توجه
-میدلور i18n کنسول (`next-intl`) روی مسیرها اعمال می‌شود. چون درخواست‌های `/docs` در لایه Ingress به سرویس دیگری مسیردهی می‌شوند، اصلاً به اپلیکیشن Next.js نمی‌رسند و تداخلی ایجاد نمی‌شود.
-:::
+> پوشه `.vercel/` در `.gitignore` قرار دارد و نباید کامیت شود.
 
-## GitOps
+## انتشار نسخه جدید
 
-طبق قوانین پروژه، تغییرات زیرساخت فقط از طریق ریپو `gitops/` و با Flux CD اعمال می‌شود. مانیفست‌های Deployment، Service و Ingress باید آنجا اضافه شوند — نه با `kubectl apply` مستقیم.
+```bash
+# نسخه پیش‌نمایش (تست قبل از انتشار)
+git tag v1.0.0-rc.1
+git push origin v1.0.0-rc.1
 
-## بررسی پس از استقرار
+# نسخه نهایی روی پروداکشن
+git tag v1.0.0
+git push origin v1.0.0
+```
 
-- [ ] `https://console.novin.cloud/docs` بدون نیاز به لاگین باز شود
-- [ ] CSS و فونت فارسی درست بارگذاری شوند
-- [ ] جهت صفحه راست‌به‌چپ باشد
-- [ ] دکمه «ویرایش این صفحه» به گیت‌هاب برود
-- [ ] مسیر `/docs/ai/about` مستقیماً (بدون عبور از صفحه اصلی) باز شود
+وضعیت استقرار در تب *Actions* در گیت‌هاب و آدرس نهایی در خلاصه اجرای workflow قابل مشاهده است.
+
+## حذف یک تگ اشتباه
+
+```bash
+git tag -d v1.0.0
+git push origin :refs/tags/v1.0.0
+```
+
+توجه: حذف تگ، استقرار انجام‌شده را برنمی‌گرداند. برای بازگشت، در داشبورد Vercel از قابلیت Rollback استفاده کنید یا تگ اصلاحی جدید بزنید.

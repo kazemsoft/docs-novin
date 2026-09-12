@@ -5,19 +5,24 @@ import { themes as prismThemes } from "prism-react-renderer";
 // Public repo that backs "ویرایش این صفحه" → users fork and open a PR.
 const EDIT_BASE_URL =
   process.env.DOCS_EDIT_BASE_URL ??
-  "https://github.com/novincloud/docs/tree/main";
+  "https://github.com/novincloud/docs-novin/tree/main";
+
+// The site is served at the root of its own domain (docs.novin.cloud).
+// Both overridable for a host that mounts the docs under a sub-path instead,
+// e.g. DOCS_BASE_URL=/docs/ — every asset URL is prefixed with this value.
+const BASE_URL = process.env.DOCS_BASE_URL ?? "/";
+const SITE_URL = process.env.DOCS_SITE_URL ?? "https://docs.novin.cloud";
 
 const config: Config = {
   title: "مستندات نوین کلاود",
   tagline: "راهنمای کامل سرویس‌های ابری نوین کلاود",
-  favicon: "img/favicon.ico",
+  favicon: "img/favicon.svg",
 
-  url: "https://console.novin.cloud",
-  // Served under /docs on the console domain, so every asset URL must be prefixed.
-  baseUrl: "/docs/",
+  url: SITE_URL,
+  baseUrl: BASE_URL,
 
   organizationName: "novincloud",
-  projectName: "docs",
+  projectName: "docs-novin",
 
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -37,7 +42,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          // Docs live at the site root — /docs/ai/about, not /docs/docs/ai/about.
+          // Docs are the whole site, so they live at the root: /ai/about.
           routeBasePath: "/",
           editUrl: EDIT_BASE_URL,
           editLocalizedFiles: true,
@@ -61,7 +66,12 @@ const config: Config = {
       title: "مستندات نوین کلاود",
       logo: {
         alt: "نوین کلاود",
-        src: "img/logo.svg",
+        // Same artwork in two inks: dark for the light navbar, white for dark.
+        src: "img/logo.png",
+        srcDark: "img/logo-dark.png",
+        // Source is 1712x416; displayed at that 4.115:1 ratio.
+        width: 148,
+        height: 36,
       },
       items: [
         {
@@ -80,7 +90,7 @@ const config: Config = {
           position: "right",
         },
         {
-          href: "https://github.com/novincloud/docs",
+          href: "https://github.com/novincloud/docs-novin",
           label: "گیت‌هاب",
           position: "right",
         },
@@ -101,9 +111,9 @@ const config: Config = {
           items: [
             {
               label: "راهنمای مشارکت",
-              href: "https://github.com/novincloud/docs/blob/main/CONTRIBUTING.md",
+              href: "https://github.com/novincloud/docs-novin/blob/main/CONTRIBUTING.md",
             },
-            { label: "گیت‌هاب", href: "https://github.com/novincloud/docs" },
+            { label: "گیت‌هاب", href: "https://github.com/novincloud/docs-novin" },
           ],
         },
         {

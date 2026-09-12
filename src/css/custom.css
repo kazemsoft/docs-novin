@@ -1,8 +1,15 @@
-/* Vazirmatn — the standard Persian web font.
-   To self-host instead (no external requests), drop the woff2 files into
-   static/fonts/ and swap this import for @font-face rules pointing at
-   /docs/fonts/... */
-@import url("https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap");
+/* Vazirmatn, self-hosted via @fontsource.
+ *
+ * Deliberately NOT loaded from Google Fonts: if international connectivity
+ * drops, a CDN font fails to load and the Persian UI falls back to a system
+ * font. These files are bundled into the build and served from our own origin,
+ * so the site renders correctly offline from the outside world.
+ *
+ * Each import carries the arabic + latin subsets with unicode-range set, so
+ * the browser only downloads the subset a page actually needs. */
+@import "@fontsource/vazirmatn/400.css";
+@import "@fontsource/vazirmatn/500.css";
+@import "@fontsource/vazirmatn/700.css";
 
 :root {
   --ifm-color-primary: #134143;
@@ -36,12 +43,43 @@ html[dir="rtl"] .markdown li {
   line-height: 2.05;
 }
 
-/* Code, endpoints and keys stay LTR even inside RTL prose. */
-html[dir="rtl"] code,
-html[dir="rtl"] pre,
-html[dir="rtl"] .prism-code {
+/* Code is always LTR, in every locale.
+ *
+ * The Persian build runs this file through rtlcss, which auto-flips ltr->rtl
+ * and left->right — so `direction: ltr` here compiles to `direction: rtl` in
+ * the fa bundle, which is exactly the bug: any line containing Persian gets
+ * bidi-reordered and `client = OpenAI(` renders as `(client = OpenAI`.
+ * The rtl:ignore directives below opt these declarations out of that
+ * flipping. Removing them silently reintroduces the bug.
+ *
+ * Not scoped to [dir="rtl"]: a Persian comment reorders punctuation in the
+ * English locale too. */
+/*rtl:ignore*/
+pre,
+code,
+.prism-code,
+.theme-code-block,
+div[class*="codeBlockContainer"],
+div[class*="codeBlockContent"],
+div[class*="codeBlockTitle"],
+.prism-code .token-line {
+  /*rtl:ignore*/
+  direction: ltr !important;
+  /*rtl:ignore*/
+  text-align: left !important;
+}
+
+/* Keep each Persian comment/string reading RTL *inside itself* without
+   leaking that direction into the surrounding code. */
+.prism-code .token.comment,
+.prism-code .token.string {
+  unicode-bidi: isolate;
+}
+
+/* Inline code inside RTL prose keeps its own LTR run. */
+html[dir="rtl"] :not(pre) > code {
   direction: ltr;
-  text-align: left;
+  unicode-bidi: isolate;
 }
 
 /* Latin digits inside Persian text — model IDs and prices must not be
@@ -51,4 +89,78 @@ html[dir="rtl"] table {
 }
 html[dir="rtl"] table code {
   unicode-bidi: embed;
+}
+
+/* ---------------------------------------------------------------------------
+ * Sidebar: make category titles stand out from their children and render the
+ * hierarchy as a tree with +/- toggles instead of a rotating caret.
+ * Logical properties (inline-start/end) are used so rtlcss needs no flipping.
+ * ------------------------------------------------------------------------- */
+:root {
+  --sidebar-cat-bg: rgba(19, 65, 67, 0.06);
+  --sidebar-cat-bg-hover: rgba(19, 65, 67, 0.12);
+  --sidebar-tree-line: var(--ifm-color-emphasis-300);
+  --sidebar-icon-plus: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1.5' y='1.5' width='13' height='13' rx='2.5' fill='none' stroke='currentColor' stroke-width='1.4'/><path d='M8 4.5v7M4.5 8h7' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'/></svg>");
+  --sidebar-icon-minus: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='1.5' y='1.5' width='13' height='13' rx='2.5' fill='none' stroke='currentColor' stroke-width='1.4'/><path d='M4.5 8h7' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'/></svg>");
+}
+[data-theme="dark"] {
+  --sidebar-cat-bg: rgba(77, 182, 171, 0.1);
+  --sidebar-cat-bg-hover: rgba(77, 182, 171, 0.18);
+}
+
+/* Category title row */
+.menu__list-item-collapsible {
+  background: var(--sidebar-cat-bg);
+  border-radius: 0.5rem;
+  margin-block: 0.35rem 0.15rem;
+}
+.menu__list-item-collapsible:hover {
+  background: var(--sidebar-cat-bg-hover);
+}
+.menu__list-item-collapsible .menu__link--sublist {
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--ifm-color-primary);
+}
+[data-theme="dark"] .menu__list-item-collapsible .menu__link--sublist {
+  color: var(--ifm-color-primary-lightest);
+}
+/* Nested categories are a notch smaller than top-level ones. */
+.menu__list .menu__list .menu__list-item-collapsible .menu__link--sublist {
+  font-size: 0.9rem;
+}
+
+/* +/- toggle instead of the rotating caret (both caret variants Docusaurus emits). */
+.menu__link--sublist-caret::after,
+.menu__caret::before {
+  background: var(--sidebar-icon-minus) center / 1rem 1rem no-repeat;
+  color: var(--ifm-color-primary);
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  transform: none !important;
+  transition: none;
+}
+[data-theme="dark"] .menu__link--sublist-caret::after,
+[data-theme="dark"] .menu__caret::before {
+  color: var(--ifm-color-primary-lightest);
+}
+.menu__list-item--collapsed .menu__link--sublist-caret::after,
+.menu__list-item--collapsed .menu__caret::before {
+  background-image: var(--sidebar-icon-plus);
+}
+
+/* Tree guide line for children. */
+.menu__list .menu__list {
+  margin-inline-start: 0.9rem;
+  padding-inline-start: 0.6rem;
+  border-inline-start: 1px solid var(--sidebar-tree-line);
+}
+.menu__list .menu__list .menu__link {
+  font-size: 0.9rem;
+  font-weight: 400;
+  padding-block: 0.3rem;
+}
+.menu__list .menu__list .menu__link--active:not(.menu__link--sublist) {
+  font-weight: 600;
 }
