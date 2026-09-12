@@ -6,7 +6,13 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "شروع کار",
       collapsed: false,
-      items: ["getting-started/introduction"],
+      items: [
+        "getting-started/introduction",
+        "getting-started/dashboard",
+        "getting-started/glossary",
+        "getting-started/faq",
+        "getting-started/contributing",
+      ],
     },
     {
       type: "category",
@@ -20,6 +26,61 @@ const sidebars: SidebarsConfig = {
         "ai/chat",
         "ai/usage-billing",
         "ai/api-reference",
+      ],
+    },
+    {
+      type: "category",
+      label: "سرورهای ابری",
+      collapsed: false,
+      items: [
+        "cloud-servers/about",
+        "cloud-servers/create",
+        "cloud-servers/access",
+        "cloud-servers/manage",
+        "cloud-servers/pricing",
+      ],
+    },
+    {
+      type: "category",
+      label: "DNS",
+      collapsed: false,
+      items: [
+        "dns/about",
+        "dns/add-domain",
+        "dns/records",
+        "dns/troubleshooting",
+      ],
+    },
+    {
+      type: "category",
+      label: "CDN",
+      collapsed: false,
+      items: [
+        "cdn/about",
+        "cdn/create-gateway",
+        "cdn/locations",
+        "cdn/waf",
+      ],
+    },
+    {
+      type: "category",
+      label: "کیف پول",
+      collapsed: false,
+      items: [
+        "wallet/about",
+        "wallet/top-up",
+        "wallet/transactions",
+        "wallet/gift-code",
+      ],
+    },
+    {
+      type: "category",
+      label: "حساب کاربری و پشتیبانی",
+      collapsed: false,
+      items: [
+        "account/registration",
+        "account/profile",
+        "support/tickets",
       ],
     },
     {
