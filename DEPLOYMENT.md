@@ -2,7 +2,7 @@
 
 سایت به‌صورت استاتیک build می‌شود و روی دامنه اختصاصی [docs.novin.cloud](https://docs.novin.cloud) در ریشه (`/`) سرو می‌شود.
 
-استقرار فعلی روی *Vercel* است و با *تگ نسخه* انجام می‌شود. طبق تسک CONSOLE-168، در آینده به سرور ایران منتقل خواهد شد؛ فایل‌های `Dockerfile` و `nginx.conf` برای همان مرحله آماده نگه داشته شده‌اند.
+استقرار فعلی روی *Vercel* است و با *تگ نسخه* انجام می‌شود. در آینده احتمال انتقال به زیرساخت داخلی وجود دارد؛ فایل‌های `Dockerfile` و `nginx.conf` برای همان مرحله آماده نگه داشته شده‌اند.
 
 ## مسیر سرو شدن (`baseUrl`)
 
@@ -58,7 +58,7 @@ Vercel به‌صورت داخلی امکان trigger روی تگ گیت را ن�
 | `VERCEL_TOKEN` | vercel.com/account/tokens |
 | `VERCEL_ORG_ID` | فایل `.vercel/project.json` بعد از اجرای `vercel link` |
 | `VERCEL_PROJECT_ID` | همان فایل |
-| `VERCEL_SCOPE` | اسلاگ تیم در Vercel (مثلاً `mohammads-projects-f0ac81fe`) |
+| `VERCEL_SCOPE` | اسلاگ تیم در Vercel (از داشبورد Vercel بخوانید) |
 
 > *مهم — نوع توکن:* حتماً از صفحه `vercel.com/account/tokens` توکن بسازید (توکن حساب کاربری).
 > توکن‌های *Project-scoped* که با `vcp_` شروع می‌شوند با Vercel CLI کار *نمی‌کنند*؛
