@@ -1,0 +1,42 @@
+{
+  "link.title.سرویس‌ها": {
+    "message": "Services",
+    "description": "The title of the footer links column with title=سرویس‌ها in the footer"
+  },
+  "link.title.مشارکت": {
+    "message": "Contributing",
+    "description": "The title of the footer links column with title=مشارکت in the footer"
+  },
+  "link.title.نوین کلاود": {
+    "message": "Novin Cloud",
+    "description": "The title of the footer links column with title=نوین کلاود in the footer"
+  },
+  "link.item.label.هوش مصنوعی": {
+    "message": "AI",
+    "description": "The label of footer link with label=هوش مصنوعی linking to /ai/about"
+  },
+  "link.item.label.شروع کار": {
+    "message": "Getting Started",
+    "description": "The label of footer link with label=شروع کار linking to /"
+  },
+  "link.item.label.راهنمای مشارکت": {
+    "message": "Contribution Guide",
+    "description": "The label of footer link with label=راهنمای مشارکت linking to https://github.com/novincloud/docs-novin/blob/main/CONTRIBUTING.md"
+  },
+  "link.item.label.گیت‌هاب": {
+    "message": "GitHub",
+    "description": "The label of footer link with label=گیت‌هاب linking to https://github.com/novincloud/docs-novin"
+  },
+  "link.item.label.وب‌سایت": {
+    "message": "Website",
+    "description": "The label of footer link with label=وب‌سایت linking to https://novin.cloud"
+  },
+  "link.item.label.کنسول کاربری": {
+    "message": "Console",
+    "description": "The label of footer link with label=کنسول کاربری linking to https://console.novin.cloud"
+  },
+  "copyright": {
+    "message": "© 2026 Novin Cloud — These docs are open source.",
+    "description": "The footer copyright"
+  }
+}
