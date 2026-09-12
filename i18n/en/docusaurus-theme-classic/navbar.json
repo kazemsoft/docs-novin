@@ -1,0 +1,22 @@
+{
+  "title": {
+    "message": "Novin Cloud Docs",
+    "description": "The title in the navbar"
+  },
+  "logo.alt": {
+    "message": "Novin Cloud",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.مستندات": {
+    "message": "Docs",
+    "description": "Navbar item with label مستندات"
+  },
+  "item.label.کنسول کاربری": {
+    "message": "Console",
+    "description": "Navbar item with label کنسول کاربری"
+  },
+  "item.label.گیت‌هاب": {
+    "message": "GitHub",
+    "description": "Navbar item with label گیت‌هاب"
+  }
+}

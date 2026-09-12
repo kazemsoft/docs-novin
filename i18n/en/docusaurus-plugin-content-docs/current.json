@@ -1,0 +1,74 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.mainSidebar.category.شروع کار": {
+    "message": "Getting Started",
+    "description": "The label for category 'شروع کار' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.هوش مصنوعی": {
+    "message": "AI",
+    "description": "The label for category 'هوش مصنوعی' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.سرورهای ابری": {
+    "message": "Cloud Servers",
+    "description": "The label for category 'سرورهای ابری' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.DNS": {
+    "message": "DNS",
+    "description": "The label for category 'DNS' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.CDN": {
+    "message": "CDN",
+    "description": "The label for category 'CDN' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.کیف پول": {
+    "message": "Wallet",
+    "description": "The label for category 'کیف پول' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.حساب کاربری و پشتیبانی": {
+    "message": "Account & Support",
+    "description": "The label for category 'حساب کاربری و پشتیبانی' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.میرورها و مخزن‌ها": {
+    "message": "Mirrors & Repositories",
+    "description": "The label for category 'میرورها و مخزن‌ها' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.راهنمای هر مخزن": {
+    "message": "Per-Repository Guides",
+    "description": "The label for category 'راهنمای هر مخزن' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.راهنمای هر مخزن.link.generated-index.title": {
+    "message": "Per-Repository Guides",
+    "description": "The generated-index page title for category 'راهنمای هر مخزن' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.راهنمای هر مخزن.link.generated-index.description": {
+    "message": "Step-by-step setup for each package manager and distribution on the Novin Cloud mirror: configuration, verification, CI usage, and rollback.",
+    "description": "The generated-index page description for category 'راهنمای هر مخزن' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.توزیع‌های لینوکس": {
+    "message": "Linux Distributions",
+    "description": "The label for category 'توزیع‌های لینوکس' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.JavaScript / Node.js": {
+    "message": "JavaScript / Node.js",
+    "description": "The label for category 'JavaScript / Node.js' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.Python": {
+    "message": "Python",
+    "description": "The label for category 'Python' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.سایر زبان‌ها": {
+    "message": "Other Languages",
+    "description": "The label for category 'سایر زبان‌ها' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.Docker و Kubernetes": {
+    "message": "Docker & Kubernetes",
+    "description": "The label for category 'Docker و Kubernetes' in sidebar 'mainSidebar'"
+  },
+  "sidebar.mainSidebar.category.ابزارهای DevOps": {
+    "message": "DevOps Tools",
+    "description": "The label for category 'ابزارهای DevOps' in sidebar 'mainSidebar'"
+  }
+}
