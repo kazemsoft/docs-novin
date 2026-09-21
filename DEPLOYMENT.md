@@ -2,7 +2,7 @@
 
 سایت به‌صورت استاتیک build می‌شود و روی دامنه اختصاصی [docs.novin.cloud](https://docs.novin.cloud) در ریشه (`/`) سرو می‌شود.
 
-استقرار فعلی روی *Vercel* است و با *تگ نسخه* انجام می‌شود. در آینده احتمال انتقال به زیرساخت داخلی وجود دارد؛ فایل‌های `Dockerfile` و `nginx.conf` برای همان مرحله آماده نگه داشته شده‌اند.
+استقرار روی *کلاستر global* انجام می‌شود: تصویر داکر ساخته و به رجیستری داخلی push می‌شود، سپس تگ در ریپو `gitops` نوشته می‌شود و Flux آن را روی کلاستر اعمال می‌کند — دقیقاً مثل `www` و `customerconsole`.
 
 ## مسیر سرو شدن (`baseUrl`)
 
@@ -22,77 +22,70 @@ DOCS_BASE_URL=/docs/ npm run build
 | `DOCS_SITE_URL` | `https://docs.novin.cloud` | دامنه، برای لینک‌های canonical |
 | `DOCS_EDIT_BASE_URL` | ریپو گیت‌هاب | مقصد دکمه «ویرایش این صفحه» |
 
+> این سه مقدار در `Dockerfile` هم به‌عنوان `ARG` با *همان* پیش‌فرض‌ها تکرار شده‌اند.
+> دلیلش این است که کانفیگ با `??` مقدار را می‌خواند و `??` فقط `undefined` را می‌گیرد؛
+> یک `ARG` تعریف‌نشده در داکر به رشته خالی تبدیل می‌شود و build با خطای
+> `"url" is not allowed to be empty` می‌شکند. اگر پیش‌فرضی در کانفیگ عوض شد، در `Dockerfile` هم عوض کنید.
+
 ---
 
-# استقرار روی Vercel با تگ
-
-استقرار با *تگ* انجام می‌شود، نه با push به `main` — مطابق قرارداد سایر ریپوهای نوین کلاود:
+# استقرار روی کلاستر با تگ
 
 | تگ | نتیجه |
 |---|---|
-| `v1.2.3` | استقرار روی پروداکشن |
-| `v1.2.3-rc.1` | استقرار پیش‌نمایش (release candidate) |
-| push به `main` | *هیچ استقراری انجام نمی‌شود* |
+| `v1.2.3` | ساخت ایمیج، push به رجیستری، به‌روزرسانی gitops، استقرار روی پروداکشن |
+| push به `main` | *هیچ استقراری انجام نمی‌شود* (فقط build در گیت‌هاب برای اعتبارسنجی لینک‌ها) |
 
-## چرا این روش؟
+## مسیر کامل
 
-Vercel به‌صورت داخلی امکان trigger روی تگ گیت را ندارد و فقط بر اساس برنچ کار می‌کند. بنابراین استقرار خودکار Vercel غیرفعال شده و یک GitHub Action با Vercel CLI این کار را انجام می‌دهد.
-
-مزیت دیگر: build داخل GitHub Actions اجرا می‌شود، پس اگر build خراب باشد تگ fail می‌خورد و نسخه معیوب منتشر نمی‌شود.
-
-## راه‌اندازی اولیه (یک‌بار)
-
-### ۱. غیرفعال کردن استقرار خودکار Vercel
-
-فایل `vercel.json` مقدار `git.deploymentEnabled.main` را روی `false` تنظیم کرده است.
-
-برای اطمینان، در داشبورد Vercel هم بررسی کنید:
-`Project → Settings → Git → Ignored Build Step`
-
-### ۲. تعریف سه Secret در گیت‌هاب
-
-مسیر: `Settings → Secrets and variables → Actions → New repository secret`
-
-| نام | از کجا |
-|---|---|
-| `VERCEL_TOKEN` | vercel.com/account/tokens |
-| `VERCEL_ORG_ID` | فایل `.vercel/project.json` بعد از اجرای `vercel link` |
-| `VERCEL_PROJECT_ID` | همان فایل |
-| `VERCEL_SCOPE` | اسلاگ تیم در Vercel (از داشبورد Vercel بخوانید) |
-
-> *مهم — نوع توکن:* حتماً از صفحه `vercel.com/account/tokens` توکن بسازید (توکن حساب کاربری).
-> توکن‌های *Project-scoped* که با `vcp_` شروع می‌شوند با Vercel CLI کار *نمی‌کنند*؛
-> این توکن‌ها به endpoint کاربر دسترسی ندارند و CLI با خطای `User not found` متوقف می‌شود.
-> هنگام ساخت توکن، Scope را روی همان تیمی تنظیم کنید که پروژه در آن قرار دارد.
-
-برای گرفتن دو مقدار آخر:
-
-```bash
-npx vercel link
-cat .vercel/project.json
+```
+git tag v1.2.3 && git push gitlab v1.2.3
+        │
+        ├─ .gitlab-ci.yml : build-docker-image
+        │     docker build → registry.devnovin.ir/novincloud/globalzone/docs-site:v1.2.3
+        │
+        ├─ .gitlab-ci.yml : production-gitops  (trigger)
+        │     ریپو novincloud/gitops شاخه main
+        │     yq تگ را در clusters/global/ik8s-system/docs-site/deployment.yaml می‌نویسد
+        │
+        └─ Flux CD روی کلاستر global تغییر را reconcile می‌کند
 ```
 
-> پوشه `.vercel/` در `.gitignore` قرار دارد و نباید کامیت شود.
+> *نام پوشه مهم است:* جاب gitops مسیر را از `$CI_PROJECT_NAME` می‌سازد،
+> پس نام پروژه در گیت‌لب و نام پوشه در `clusters/global/ik8s-system/` باید هر دو `docs-site` باشند.
+
+## منابع روی کلاستر
+
+فایل‌ها در ریپو `gitops` مسیر `clusters/global/ik8s-system/docs-site/`:
+
+| فایل | نقش |
+|---|---|
+| `deployment.yaml` | ۲ رپلیکا، ایمیج nginx استاتیک، probe روی `/` |
+| `service.yaml` | پورت ۸۰۸۰ |
+| `ingress.yaml` | هاست `docs.novin.cloud` روی ingress class کونگ |
+
+TLS از گواهی wildcard موجود (`global-novincloud-tls`) می‌آید که با reflector در namespace کپی می‌شود؛ نیازی به صدور گواهی جدید نیست.
+
+## نکات ایمیج
+
+- ایمیج پایه `nginxinc/nginx-unprivileged` است و کانتینر با کاربر `nginx` (uid 101) اجرا می‌شود، نه root. به همین دلیل پورت داخلی *۸۰۸۰* است نه ۸۰.
+- در `nginx.conf` مقدار `absolute_redirect off` تنظیم شده؛ بدون آن nginx در ریدایرکتِ اسلشِ انتهایی پورت داخلی خودش را لو می‌دهد و کاربر پشت کونگ به آدرس خراب فرستاده می‌شود.
+- صفحه ۴۰۴ با `error_page` داخل هر fallback ست شده تا هم *کد ۴۰۴ واقعی* برگردد (نه ۲۰۰) و هم هر زبان صفحه ۴۰۴ خودش را بگیرد.
 
 ## انتشار نسخه جدید
 
 ```bash
-# نسخه پیش‌نمایش (تست قبل از انتشار)
-git tag v1.0.0-rc.1
-git push origin v1.0.0-rc.1
-
-# نسخه نهایی روی پروداکشن
-git tag v1.0.0
-git push origin v1.0.0
+npm version patch          # یا minor / major
+git push gitlab main --follow-tags
 ```
 
-وضعیت استقرار در تب *Actions* در گیت‌هاب و آدرس نهایی در خلاصه اجرای workflow قابل مشاهده است.
+وضعیت در پایپ‌لاین گیت‌لب و سپس در کامیت خودکار روی ریپو `gitops` قابل پیگیری است.
 
 ## حذف یک تگ اشتباه
 
 ```bash
 git tag -d v1.0.0
-git push origin :refs/tags/v1.0.0
+git push gitlab :refs/tags/v1.0.0
 ```
 
-توجه: حذف تگ، استقرار انجام‌شده را برنمی‌گرداند. برای بازگشت، در داشبورد Vercel از قابلیت Rollback استفاده کنید یا تگ اصلاحی جدید بزنید.
+توجه: حذف تگ، استقرار انجام‌شده را برنمی‌گرداند. برای بازگشت، تگ قبلی را در `deployment.yaml` ریپو `gitops` بنویسید یا تگ اصلاحی جدید بزنید.

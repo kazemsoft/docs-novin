@@ -1,5 +1,8 @@
 name: Build docs
 
+# GitHub only gates PRs and main. The release path lives in .gitlab-ci.yml:
+# a version tag on the GitLab remote builds the image, pushes it to the
+# internal registry and updates the gitops repo. See DEPLOYMENT.md.
 on:
   pull_request:
   push:

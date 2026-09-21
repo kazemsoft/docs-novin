@@ -1,0 +1,46 @@
+# Builds the docs image on a version tag and hands the tag to the gitops
+# repo, which Flux reconciles onto the global cluster. Mirrors www/.
+default:
+  image: docker
+  services:
+    - name: docker:dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://registry.ik8s.ir
+        - --insecure-registry=registry.ik8s.ir
+variables:
+  BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
+  DOCKER_TLS_CERTDIR: ''
+  DOCKER_HOST: tcp://docker:2375
+
+stages:
+  - build
+  - update
+
+build-docker-image:
+  stage: build
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    # The Docusaurus build runs inside the image; onBrokenLinks: "throw"
+    # means a dead link fails the tag instead of shipping a broken site.
+    - docker build -f Dockerfile
+        -t $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_TAG .
+    - docker image push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+(\.[0-9]+){0,2}$/'
+  tags:
+    - gitops-runner
+
+production-gitops:
+  stage: update
+  variables:
+    GITOPS_CI_IMAGE_NAMESPACE: '$CI_PROJECT_NAMESPACE'
+    GITOPS_CI_IMAGE_NAME: '$CI_PROJECT_NAME'
+    GITOPS_CI_IMAGE_TAG: '$CI_COMMIT_TAG'
+    GITOPS_CI_ZONE: 'global'
+    GITOPS_CI_TRIGGER: 'true'
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+(\.[0-9]+){0,2}$/'
+  trigger:
+    project: novincloud/gitops
+    branch: main
