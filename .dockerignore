@@ -1,0 +1,14 @@
+# .gitignore does not apply to the docker build context, so secrets that are
+# safely untracked still land in the builder layer without this file.
+.git
+.github
+node_modules
+build
+.docusaurus
+.cache-loader
+# Real credentials live here (Vercel OIDC token, project/org ids).
+.env*
+.vercel
+.DS_Store
+npm-debug.log*
+yarn-error.log*

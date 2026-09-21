@@ -27,7 +27,10 @@ build-docker-image:
         -t $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_TAG .
     - docker image push $CI_REGISTRY/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_COMMIT_TAG
   rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+(\.[0-9]+){0,2}$/'
+    # \A/\z, not ^/$: GitLab matches with Ruby, where ^/$ anchor to a LINE,
+    # so a multi-line ref would satisfy ^...$. This regex is the only thing
+    # keeping crafted tag text out of the downstream `yq` shell command.
+    - if: '$CI_COMMIT_TAG =~ /\Av[0-9]+(\.[0-9]+){0,2}\z/'
   tags:
     - gitops-runner
 
@@ -40,7 +43,10 @@ production-gitops:
     GITOPS_CI_ZONE: 'global'
     GITOPS_CI_TRIGGER: 'true'
   rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+(\.[0-9]+){0,2}$/'
+    # \A/\z, not ^/$: GitLab matches with Ruby, where ^/$ anchor to a LINE,
+    # so a multi-line ref would satisfy ^...$. This regex is the only thing
+    # keeping crafted tag text out of the downstream `yq` shell command.
+    - if: '$CI_COMMIT_TAG =~ /\Av[0-9]+(\.[0-9]+){0,2}\z/'
   trigger:
     project: novincloud/gitops
     branch: main
