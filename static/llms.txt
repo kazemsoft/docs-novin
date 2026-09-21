@@ -1,0 +1,16 @@
+# Novin Cloud Documentation (مستندات نوین کلاد)
+
+> Official, open-source docs for Novin Cloud services: cloud servers, CDN, DNS, AI gateway, wallet, support, and the free software mirrors at mirror.novin.cloud. Persian (default) with an English locale under /en/.
+
+## Sections
+- [Introduction](https://docs.novin.cloud/)
+- [Cloud servers](https://docs.novin.cloud/cloud-servers/about): create, access (SSH/RDP/VNC), manage, hourly pricing.
+- [CDN](https://docs.novin.cloud/cdn/about): gateways, upstreams & locations, cache TTLs, WAF rules.
+- [DNS](https://docs.novin.cloud/dns/about): add domain, records, troubleshooting.
+- [AI gateway](https://docs.novin.cloud/ai/about): OpenAI-compatible API at https://iapi.novin.cloud/v1, API keys, models, usage & billing.
+- [Mirrors](https://docs.novin.cloud/mirrors/about): Linux, languages, Docker/OCI, DevOps, per-tool guides, all repositories.
+- [Wallet](https://docs.novin.cloud/wallet/about) · [Support tickets](https://docs.novin.cloud/support/tickets) · [Account](https://docs.novin.cloud/account/registration)
+- [FAQ](https://docs.novin.cloud/getting-started/faq) · [Glossary](https://docs.novin.cloud/getting-started/glossary)
+
+## Related
+- [Marketing site](https://novin.cloud) · [Console](https://console.novin.cloud) · [Sitemap](https://docs.novin.cloud/sitemap.xml)
